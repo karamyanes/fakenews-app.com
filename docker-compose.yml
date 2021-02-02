@@ -1,0 +1,45 @@
+version: "2.4"
+
+volumes:
+  db_data:
+    driver: local
+
+services:
+  mysql_db:
+    container_name: mysql_db
+    image: mysql:5.7
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "quiz_db"
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "root"
+    ports:
+      - "3306:3306"
+    
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - mysql_db
+    ports:
+      - 5001:8080
+
+  api:
+    build: .
+    container_name: api
+    tty: true
+    restart: unless-stopped
+    depends_on:
+      - mysql_db
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:3000"
+    volumes:
+      - ./:/app/
+      - ./volumes/logs:/var/log
