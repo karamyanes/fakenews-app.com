@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-  
-
-# Create your models here
 
 class Question(models.Model):
     STATUS=(
@@ -20,6 +17,7 @@ class Question(models.Model):
     def __str__(self):
         return self.question_text
 
+
 class Answer(models.Model):
     STATUS=(
         ('true','true'),
@@ -35,6 +33,7 @@ class Answer(models.Model):
     def __str__(self):
         return self.answer_text
 
+
 # class player is extended class from class User so it is extend user database
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -46,6 +45,7 @@ class Player(models.Model):
 class UserQuestionHistory(models.Model):
     questioner_id= models.ForeignKey(Player, on_delete=models.CASCADE, related_name = "questioner")
     respoender_id= models.ForeignKey(Player, on_delete=models.CASCADE, related_name = "respoender")
+
 
 class Result(models.Model):
     answer_id= models.ForeignKey(Answer, on_delete=models.CASCADE, related_name = "Answer") 

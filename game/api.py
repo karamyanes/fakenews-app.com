@@ -11,30 +11,13 @@ from .serializers import PlayerListSerializer
 from rest_framework.response import Response
 
 
-
-
-
-# class TransactionListAPI(generics.ListAPIView):
-# 	serializer_class = TransactionListSerializer
-# 	permission_classes = [
-# 		permissions.IsAuthenticated
-# 	]
-
-# 	def get_queryset(self, *args, **kwargs):
-# 		queryset = Transaction.objects.all()
-# 		query = self.request.GET.get("q")
-
-# 		return queryset
-
-
 class QuestionView(viewsets.ModelViewSet):
 	"""
 	A simple ViewSet for view, edit and delete Transactions.
 	"""
 	queryset = Question.objects.all()
 	serializer_class = QuestionListSerializer
-	#permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
-
+	permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
 
 
 class AnswerView(generics.GenericAPIView):
@@ -43,7 +26,7 @@ class AnswerView(generics.GenericAPIView):
 	"""
 #	queryset = Answer.objects.all()
 	serializer_class = AnswerListSerializer
-	#permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
+	permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
 
 	def post(self, request, *args, **kwargs):
 		"""
@@ -76,4 +59,4 @@ class PlayerView(viewsets.ModelViewSet):
 	"""
 	queryset = Player.objects.all()
 	serializer_class = PlayerListSerializer
-	#permission_classes = [permissions.IsAuthenticated]
+	permission_classes = [permissions.IsAuthenticated]
