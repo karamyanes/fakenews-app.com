@@ -40,9 +40,9 @@ class AnswerView(generics.GenericAPIView):
 		question_id = request.POST['questionid']
 		obj_question = Question.objects.get(pk=question_id)
 		#obj_question.correct_answer
-		print(obj_question)
-		# if request.POST['answer_text'] == obj_question.correct_answer:
-		if request.POST['answer_text'] == request.POST['correct_answer']:
+		#print(obj_question)
+		#if request.POST['answer_text'] == request.POST['correct_answer']
+		if request.POST['answer_text'] == obj_question.correct_answer:
 			serializer.is_correct = True
 		else :
 			serializer.is_correct = False
@@ -50,9 +50,8 @@ class AnswerView(generics.GenericAPIView):
 		return Response({
 			"answer" : AnswerListSerializer(answer, context=self.get_serializer_context()).data,
 		})
-			# set is_correct to True
-		 
-		 
+			
+		 		 
 class PlayerView(viewsets.ModelViewSet):
 	"""
 	A simple ViewSet for view, edit and delete Transactions.
