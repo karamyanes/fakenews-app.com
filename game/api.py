@@ -17,7 +17,7 @@ class QuestionView(viewsets.ModelViewSet):
 	"""
 	queryset = Question.objects.all()
 	serializer_class = QuestionListSerializer
-	permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
+	# permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
 
 
 class AnswerView(generics.GenericAPIView):
@@ -26,27 +26,27 @@ class AnswerView(generics.GenericAPIView):
 	"""
 #	queryset = Answer.objects.all()
 	serializer_class = AnswerListSerializer
-	permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
+	# permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
 
 	def post(self, request, *args, **kwargs):
 		"""
 		1- we have to serilaizer the request 
 		2- get question correct answer by request.question_id
 		"""
-		#we have to serilaizer the request
+		# we have to serilaizer the request
 		serializer = self.get_serializer(data=request.data)
 		serializer.is_valid(raise_exception=True)
-		#get question correct answer by request.question_id
+
+		# get question correct answer by request.question_id
 		question_id = request.POST['questionid']
 		obj_question = Question.objects.get(pk=question_id)
-		print(request.POST['answer_text'] == obj_question.correct_answer)
+		answer = serializer.save()  # save data in db
+
+		# we will update the is_correct field if 'user answer' is same / correct "question answer"
 		if request.POST['answer_text'] == obj_question.correct_answer:
-			print('check if condition')
-			serializer.is_correct = True
-		else :
-			print('check ELSE condition')
-			serializer.is_correct = False
-		answer = serializer.save()
+			answer.is_correct = True
+			answer.save()  # To save the answer in db
+
 		return Response({
 			"answer" : AnswerListSerializer(answer, context=self.get_serializer_context()).data,
 		})
