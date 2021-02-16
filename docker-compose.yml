@@ -5,8 +5,8 @@ volumes:
     driver: local
 
 services:
-  mysql_db:
-    container_name: mysql_db
+  sql_db_fakenews:
+    container_name: sql_db_fakenews
     image: mysql:5.7
     restart: unless-stopped
     environment:
@@ -15,16 +15,16 @@ services:
       MYSQL_USER: "root"
       MYSQL_PASSWORD: "root"
     ports:
-      - "3306:3306"
+      - "33065:3306"
     
 
   adminer:
     image: adminer
     restart: always
     depends_on:
-      - mysql_db
+      - sql_db_fakenews
     ports:
-      - 5001:8080
+      - 5000:8080
 
   api:
     build: .
@@ -32,7 +32,7 @@ services:
     tty: true
     restart: unless-stopped
     depends_on:
-      - mysql_db
+      - sql_db_fakenews
     env_file:
       - .env
     ports:
