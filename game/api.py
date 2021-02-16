@@ -39,7 +39,22 @@ class AnswerView(generics.GenericAPIView):
 
 		# get question correct answer by request.question_id
 		question_id = request.POST['questionid']
+<<<<<<< HEAD
 		obj_question = Question.objects.get(pk=question_id)
+=======
+<<<<<<< HEAD
+		obj_question = Question.objects.get(pk=question_id)
+		#print(serializer)
+		if request.POST['answer_text'] == obj_question.correct_answer:
+			print('check if condition')
+			serializer.is_correct = True
+		#else :
+		#	print('check ELSE condition')
+		#	serializer.is_correct = 0
+		answer = serializer.save()
+=======
+		obj_questions = Question.objects.get(pk=question_id)
+>>>>>>> 962e894bf293f344124374fc5cee9ab322d22b31
 		answer = serializer.save()  # save data in db
 
 		# we will update the is_correct field if 'user answer' is same / correct "question answer"
@@ -47,6 +62,7 @@ class AnswerView(generics.GenericAPIView):
 			answer.is_correct = True
 			answer.save()  # To save the answer in db
 
+>>>>>>> 3d8c78952076e6a97dd8cfde025e799aadde40e9
 		return Response({
 			"answer" : AnswerListSerializer(answer, context=self.get_serializer_context()).data,
 		})
