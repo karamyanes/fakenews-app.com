@@ -39,13 +39,13 @@ class AnswerView(generics.GenericAPIView):
 		#get question correct answer by request.question_id
 		question_id = request.POST['questionid']
 		obj_question = Question.objects.get(pk=question_id)
-		print(request.POST['answer_text'] == obj_question.correct_answer)
+		#print(serializer)
 		if request.POST['answer_text'] == obj_question.correct_answer:
 			print('check if condition')
 			serializer.is_correct = True
-		else :
-			print('check ELSE condition')
-			serializer.is_correct = False
+		#else :
+		#	print('check ELSE condition')
+		#	serializer.is_correct = 0
 		answer = serializer.save()
 		return Response({
 			"answer" : AnswerListSerializer(answer, context=self.get_serializer_context()).data,
