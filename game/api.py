@@ -39,11 +39,11 @@ class AnswerView(generics.GenericAPIView):
 
 		# get question correct answer by request.question_id
 		question_id = request.POST['questionid']
-		obj_questions = Question.objects.get(pk=question_id)
+		obj_question = Question.objects.get(pk=question_id)
 		answer = serializer.save()  # save data in db
 
 		# we will update the is_correct field if 'user answer' is same / correct "question answer"
-		if request.POST['answer_text'] == obj_questions.correct_answer:
+		if request.POST['answer_text'] == obj_question.correct_answer:
 			answer.is_correct = True
 			answer.save()  # To save the answer in db
 
