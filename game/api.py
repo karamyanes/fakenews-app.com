@@ -51,14 +51,12 @@ class AnswerView(generics.GenericAPIView):
 		
 			# insert into player 
 			current_user = self.request.user
-			print(current_user)
 			Player.objects.get_or_create(user=current_user)
 
 			# update score
-			current_player = Player.objects.get(user=current_user)
-			print(current_player)
+			current_player = Player.objects.get(user=current_user)  # user her is refere to the user field in Player model (table)
 			new_score = current_player.score + 1  # get the current_score and increase it 
-			Player.objects.filter(user=current_user).update( score = new_score )  # 
+			Player.objects.filter(user=current_user).update( score = new_score )  #  updating the user score with new value
 
 		return Response({
 			"answer" : AnswerListSerializer(answer, context=self.get_serializer_context()).data,
@@ -72,4 +70,3 @@ class PlayerView(generics.GenericAPIView):
 	queryset = Player.objects.all()
 	serializer_class = PlayerListSerializer
 	permission_classes = [permissions.IsAuthenticated]
-		
