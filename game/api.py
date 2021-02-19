@@ -26,7 +26,7 @@ class AnswerView(generics.GenericAPIView):
 	"""
 #	queryset = Answer.objects.all()
 	serializer_class = AnswerListSerializer
-	# permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
+	permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
 
 	def post(self, request, *args, **kwargs):
 		"""
@@ -39,23 +39,37 @@ class AnswerView(generics.GenericAPIView):
 
 		# get question correct answer by request.question_id
 		question_id = request.POST['questionid']
+		print(question_id)
 		obj_question = Question.objects.get(pk=question_id)
+		print(obj_question)
 		answer = serializer.save()  # save data in db
 
 		# we will update the is_correct field if 'user answer' is same / correct "question answer"
 		if request.POST['answer_text'] == obj_question.correct_answer:
 			answer.is_correct = True
 			answer.save()  # To save the answer in db
+		
+			# insert into player 
+			current_user = self.request.user
+			print(current_user)
+			Player.objects.get_or_create(user=current_user)
+
+			# update score
+			current_player = Player.objects.get(user=current_user)
+			print(current_player)
+			new_score = current_player.score + 1  # get the current_score and increase it 
+			Player.objects.filter(user=current_user).update( score = new_score )  # 
 
 		return Response({
 			"answer" : AnswerListSerializer(answer, context=self.get_serializer_context()).data,
 		})
 			
 		 		 
-class PlayerView(viewsets.ModelViewSet):
+class PlayerView(generics.GenericAPIView):
 	"""
 	A simple ViewSet for view, edit and delete Transactions.
 	"""
 	queryset = Player.objects.all()
 	serializer_class = PlayerListSerializer
 	permission_classes = [permissions.IsAuthenticated]
+		

@@ -37,10 +37,9 @@ class Answer(models.Model):
 # class player is extended class from class User so it is extend user database
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    score = models.IntegerField()
-    def __str__(self):
-        return self.User.username
-
+    score = models.IntegerField(default=0, null=True, blank=True)
+    def str(self):
+        return self.user.username
     
 class UserQuestionHistory(models.Model):
     questioner_id= models.ForeignKey(Player, on_delete=models.CASCADE, related_name = "questioner")
