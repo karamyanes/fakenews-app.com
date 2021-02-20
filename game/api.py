@@ -44,13 +44,15 @@ class AnswerView(generics.GenericAPIView):
 		print(obj_question)
 		answer = serializer.save()  # save data in db
 
+		 
+		current_user = self.request.user
+		
 		# we will update the is_correct field if 'user answer' is same / correct "question answer"
 		if request.POST['answer_text'] == obj_question.correct_answer:
 			answer.is_correct = True
 			answer.save()  # To save the answer in db
-		
-			# insert into player 
-			current_user = self.request.user
+
+			# insert into player
 			Player.objects.get_or_create(user=current_user)
 
 			# update score
@@ -58,9 +60,17 @@ class AnswerView(generics.GenericAPIView):
 			new_score = current_player.score + 1  # get the current_score and increase it 
 			Player.objects.filter(user=current_user).update( score = new_score )  #  updating the user score with new value
 
-		return Response({
-			"answer" : AnswerListSerializer(answer, context=self.get_serializer_context()).data,
-		})
+			return Response({
+				"answer" : AnswerListSerializer(answer, context=self.get_serializer_context()).data,
+				"score"  : new_score,
+			})
+		else : 
+			current_player = Player.objects.get(user=current_user)
+			score = current_player.score
+			return Response({
+				"message" : "your answer is not correct" ,
+				"score"  : score,
+			})
 			
 		 		 
 class PlayerView(generics.GenericAPIView):
