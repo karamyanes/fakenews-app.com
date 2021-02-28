@@ -102,7 +102,7 @@ DATABASES = {
         'NAME': 'quiz_db',
         'USER': 'root',
         'PASSWORD': 'root',
-        'HOST': 'mysql_db',
+        'HOST': 'sql_db_fakenews',
         'PORT': '3306',
     }
 }

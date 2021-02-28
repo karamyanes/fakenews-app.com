@@ -19,8 +19,7 @@ class Question(models.Model):
     )
     question_text = models.CharField(max_length=2000)
     correct_answer = models.CharField(max_length=100,choices=STATUS)
-    game_id = models.ForeignKey(Lobby, default=0, on_delete=models.CASCADE, verbose_name = "related to Lobby")# we cannot make default = 0
-    # because he reason maybe is that you have tried to add a foreign key to a model which uses AutoField as its primary key
+    game_id = models.ForeignKey(Lobby, default=0, on_delete=models.CASCADE, verbose_name = "related to Lobby")
     
     
     def __str__(self):

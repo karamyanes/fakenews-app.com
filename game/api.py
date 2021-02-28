@@ -1,13 +1,9 @@
 from django.db.models import Q
 from rest_framework import generics, permissions, response, viewsets
-from .models import UserQuestionHistory
-from .models import Player
-from .models import Question
-from .models import Answer
-from .models import Result
-from .serializers import QuestionListSerializer
-from .serializers import AnswerListSerializer
-from .serializers import PlayerListSerializer
+from rest_framework import serializers
+from rest_framework.serializers import Serializer
+from .models import Lobby, UserQuestionHistory, Player, Question, Answer, Result
+from .serializers import QuestionListSerializer, AnswerListSerializer, PlayerListSerializer, LobbySerializer
 from rest_framework.response import Response
 
 
@@ -22,7 +18,7 @@ class QuestionView(viewsets.ModelViewSet):
 
 class AnswerView(generics.GenericAPIView):
 	"""
-	A simple ViewSet for view, edit and delete Transactions.
+	A simple GenericAPIView for view, add game.
 	"""
 #	queryset = Answer.objects.all()
 	serializer_class = AnswerListSerializer
@@ -39,9 +35,7 @@ class AnswerView(generics.GenericAPIView):
 
 		# get question correct answer by request.question_id
 		question_id = request.POST['questionid']
-		print(question_id)
 		obj_question = Question.objects.get(pk=question_id)
-		print(obj_question)
 		answer = serializer.save()  # save data in db
 
 		 
@@ -75,8 +69,64 @@ class AnswerView(generics.GenericAPIView):
 		 		 
 class PlayerView(generics.GenericAPIView):
 	"""
-	A simple ViewSet for view, edit and delete Transactions.
+	A simple GenericAPIView for view, add game.
 	"""
 	queryset = Player.objects.all()
 	serializer_class = PlayerListSerializer
 	permission_classes = [permissions.IsAuthenticated]
+
+
+class GameQuestion(generics.GenericAPIView):
+    pass
+
+
+class JoinGame(generics.GenericAPIView):
+	pass
+
+
+#class LobbyView(generics.GenericAPIView):
+	"""
+	A simple ViewSet for view, edit and delete Transactions.
+	"""
+""" 	#queryset = Lobby.objects.all()
+	serializer_class = PlayerListSerializer
+	permission_classes = [permissions.IsAuthenticated]
+	
+	def post(self, request, *args, **kwargs):
+
+		serializer = self.get_serializer(data=request.data)
+		serializer.is_valid(raise_exception=True)
+		current_players = request.POST['current_players']
+		num_of_players = request.POST['num_of_players']
+		current_user = self.request.user """
+		
+
+class CreatGame(generics.GenericAPIView):
+	"""
+	A simple GenericAPIView for view, add game.
+	"""
+	serializer_class = LobbySerializer
+	permission_classes = [permissions.IsAuthenticated]
+	
+	#create game for first time
+	def post(self, request, *args, **kwargs):
+		current_user = self.request.user
+		print(current_user)
+		serializer = self.get_serializer(data=request.data)
+		serializer.is_valid(raise_exception=True)
+		game = serializer.save()
+		print(game.id)
+		new_player = game.current_players + 1
+		#game.update( current_player = new_player)
+		game.current_players = new_player
+		game.save()
+		game_filter = Lobby.objects.get(pk=game.id)
+		creater = Player.objects.create(user=current_user, game_id = game.id, user_status = 'questioner')
+
+		return Response({
+				"message" : "Succsesfully created game" ,
+				"game"    : game ,
+				'newPlayer' : creater
+			})
+
+
