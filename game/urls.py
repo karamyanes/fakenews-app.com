@@ -9,8 +9,12 @@ router.register('question', api.QuestionView)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('answer/', api.AnswerView.as_view()),
+    path('answer_single/', api.AnswerView.as_view()),
     path('player/', api.PlayerView.as_view()),
+    # path('new_game/', ),
+	# path("add_game_questions/", ),
+	# path("join_game/", ),
+	# path("game_answer/", ),
    #  path('question/',include(router.urls)),
 	# path("transaction/list/", TransactionListAPI.as_view()),
 ]

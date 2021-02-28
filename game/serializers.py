@@ -36,6 +36,11 @@ class UserQuestionHistoryListSerializer(serializers.ModelSerializer):
 		fields = "__all__"
 
 
+class LobbySerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Result
+		fields = "__all__"
+
 
 
 
