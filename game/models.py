@@ -49,7 +49,7 @@ class Player(models.Model):
         ('respondent', 'respondent'),
         ('single_player','single_player'),
     )
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.IntegerField(default=0, null=True, blank=True)
     game_id = models.ForeignKey(Lobby, default=0, on_delete=models.CASCADE, verbose_name = "related to Lobby")
     user_status= models.CharField(max_length=256,choices=Status)

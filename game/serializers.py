@@ -2,7 +2,7 @@ from .models import Lobby, UserQuestionHistory , Player, Question, Answer, Resul
 from rest_framework import serializers
 
 
-class PlayerListSerializer(serializers.ModelSerializer):
+class PlayerSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Player
 		fields = "__all__"

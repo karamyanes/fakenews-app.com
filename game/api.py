@@ -1,9 +1,9 @@
 from django.db.models import Q
-from rest_framework import generics, permissions, response, viewsets
-from rest_framework import serializers
-from rest_framework.serializers import Serializer
+from rest_framework import generics, permissions, response, viewsets,status
+from rest_framework.views import APIView
+from django.contrib.auth.models import User
 from .models import Lobby, UserQuestionHistory, Player, Question, Answer, Result
-from .serializers import QuestionListSerializer, AnswerListSerializer, PlayerListSerializer, LobbySerializer
+from .serializers import QuestionListSerializer, AnswerListSerializer, PlayerSerializer, LobbySerializer
 from rest_framework.response import Response
 
 
@@ -48,7 +48,9 @@ class AnswerView(generics.GenericAPIView):
 
 			# insert into player
 			Player.objects.get_or_create(user=current_user)
-
+			#update user status
+			Player.objects.filter(user=current_user).update(user_status = 'single_player')
+			# we need to create game_id and update Player table with game_id ; when he press single player so he should get new player and new game_id (Lobby)
 			# update score
 			current_player = Player.objects.get(user=current_user)  # user her is refere to the user field in Player model (table)
 			new_score = current_player.score + 1  # get the current_score and increase it 
@@ -72,7 +74,7 @@ class PlayerView(generics.GenericAPIView):
 	A simple GenericAPIView for view, add game.
 	"""
 	queryset = Player.objects.all()
-	serializer_class = PlayerListSerializer
+	serializer_class = PlayerSerializer
 	permission_classes = [permissions.IsAuthenticated]
 
 
@@ -81,52 +83,67 @@ class GameQuestion(generics.GenericAPIView):
 
 
 class JoinGame(generics.GenericAPIView):
-	pass
-
-
-#class LobbyView(generics.GenericAPIView):
-	"""
-	A simple ViewSet for view, edit and delete Transactions.
-	"""
-""" 	#queryset = Lobby.objects.all()
-	serializer_class = PlayerListSerializer
+	serializer_class = PlayerSerializer
 	permission_classes = [permissions.IsAuthenticated]
-	
+
 	def post(self, request, *args, **kwargs):
-
-		serializer = self.get_serializer(data=request.data)
-		serializer.is_valid(raise_exception=True)
-		current_players = request.POST['current_players']
-		num_of_players = request.POST['num_of_players']
-		current_user = self.request.user """
+		"""
+		the palyer join the game so he need 1- game id -2- we have to know number of player 
+		i have to make sure that there is a place for new player
+		"""
+		game_id = request.POST['game_id']  
+		game_obj = Lobby.objects.get(pk=game_id)  # we make query on lobby table by primery key =  game_id
+		num_of_players = game_obj.num_of_players  # we bring from game_obj num_of_players and current_players
+		current_players = game_obj.current_players 
+		player_obj = Player.objects.get(game_id=game_id)
+			# we check if current_players smaller than num_of_players and we not alowed the same user to join the same game again
+		if current_players < num_of_players and player_obj.user.id != int(request.POST['user']) and player_obj.user_status != request.POST['user_status'] :
+			serializer = self.get_serializer(data=request.data)
+			serializer.is_valid(raise_exception=True)
+			#current_user = self.request.user
+			serializer.save()
+			new_count_player = current_players + 1
+			Lobby.objects.filter(pk=game_id).update( current_players = new_count_player)
+			return Response({
+				'message' : ' sucsefull join the game',
+				'player' : serializer.data,
+			})
+		else:
+			return Response({'message' : 'no places game is full or you allready joined the game',})
+			
 		
-
-class CreatGame(generics.GenericAPIView):
+class CreatGame(APIView):
 	"""
 	A simple GenericAPIView for view, add game.
 	"""
-	serializer_class = LobbySerializer
 	permission_classes = [permissions.IsAuthenticated]
 	
 	#create game for first time
-	def post(self, request, *args, **kwargs):
-		current_user = self.request.user
-		print(current_user)
-		serializer = self.get_serializer(data=request.data)
-		serializer.is_valid(raise_exception=True)
-		game = serializer.save()
-		print(game.id)
-		new_player = game.current_players + 1
-		#game.update( current_player = new_player)
-		game.current_players = new_player
-		game.save()
-		game_filter = Lobby.objects.get(pk=game.id)
-		creater = Player.objects.create(user=current_user, game_id = game.id, user_status = 'questioner')
+	def post(self, request, format=None):
+	
+		serializer = LobbySerializer(data=request.data)
+		if serializer.is_valid():
+			game_obj = serializer.save()
+			current_user = self.request.user
+			try:
+				player_obj = Player.objects.create(user=current_user, game_id=game_obj, user_status='questioner')
+				# import json
+				# from django.forms.models import model_to_dict
+				# play = json.dumps(model_to_dict(player_obj))
 
-		return Response({
-				"message" : "Succsesfully created game" ,
-				"game"    : game ,
-				'newPlayer' : creater
-			})
+				return Response({
+					"message" : "Game successfully created" ,
+					"game" : serializer.data ,
+					"player_game" : player_obj.id,
+					"status": status.HTTP_201_CREATED
+					})
+			except:
+				# Roll-back :: delete the record created by Lobby serializer
+				loby_obj = Lobby.objects.get(pk=game_obj.id)
+				loby_obj.delete()
+				return Response({
+					'Error' : 'game not created',
+					'status': status.HTTP_400_BAD_REQUEST
+					})
 
-
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
