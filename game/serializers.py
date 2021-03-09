@@ -1,4 +1,4 @@
-from .models import GameQuestions, Lobby, UserQuestionHistory , Player, Question, Answer, Result
+from .models import  Lobby, UserQuestionHistory , Player, Question, Answer, Result
 from rest_framework import serializers
 
 
@@ -35,10 +35,4 @@ class UserQuestionHistoryListSerializer(serializers.ModelSerializer):
 class LobbySerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Lobby
-		fields = "__all__"
-
-
-class GameQuestionSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = GameQuestions
 		fields = "__all__"

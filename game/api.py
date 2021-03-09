@@ -3,8 +3,8 @@ from rest_framework import generics, permissions, response, viewsets,status
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from .models import Lobby, UserQuestionHistory, Player, Question, Answer, Result , GameQuestions
-from .serializers import QuestionListSerializer, AnswerListSerializer, PlayerSerializer, LobbySerializer, GameQuestionSerializer
+from .models import Lobby, UserQuestionHistory, Player, Question, Answer, Result
+from .serializers import QuestionListSerializer, AnswerListSerializer, PlayerSerializer, LobbySerializer
 from rest_framework.response import Response
 
 
@@ -83,66 +83,6 @@ class PlayerView(generics.GenericAPIView):
 	permission_classes = [permissions.IsAuthenticated]
 
 
-class GameQuestion(generics.GenericAPIView): 
-	serializer_class = GameQuestionSerializer 
-	permission_classes = [permissions.IsAuthenticated]
-
-	def post(self, request, *args, **kwargs):
-		game_id = request.POST['game_id']
-		if game_id == 10000 : #  game id must not equal 10000 (this is game_id = 10000 for single player)
-			return Response({
-					'Error' : 'you can not add questions for singleplayer',
-					'status': status.HTTP_400_BAD_REQUEST
-					})
-		game = Lobby.objects.get(pk=game_id)
-		# we prevent user to add more questions to current game
-		#if game :
-		#	return Response({
-		#			'Error' : 'you can not add new questions for current game',
-		#			'status': status.HTTP_400_BAD_REQUEST
-		#			})
-		# we need to make sure that the player who add the question is questioner 
-		current_user = self.request.user
-		player_obj = Player.objects.get(game_id=game_id)
-		if player_obj.user_status != 'questioner' and player_obj.user != current_user  :
-			return Response({
-					'Error' : 'this user is not questioner',
-					'status': status.HTTP_400_BAD_REQUEST
-					})
-		data = request.data
-		if isinstance(data, list):
-			serializer = self.get_serializer(data=request.data, many=True)
-			print(data,'pppppppppppppppppppppppppppppppppppppppppppppp')
-		else:
-			serializer = self.get_serializer(data=request.data)
-			print(data,'sssssssssssssssssssssssssssssssssssssssssss')
-		serializer.is_valid(raise_exception=True)
-		#self.perform_create(serializer)
-		serializer.save()
-		#headers = self.get_success_headers(serializer.data)
-		return Response(serializer.data, status=status.HTTP_201_CREATED)
-	
-	#def post(self, request, *args, **kwargs):
-		#  serializer = LobbySerializer(data=request.data)
-	#	game_id = request.POST['game_id']  
-	#	question_ids = request.POST['question_ids']
-	#	game = Lobby.objects.get(pk=game_id)
-	#	game_name = game.game_name
-	#	serialized = GameQuestionSerializer(data=request.data, many=True) # many refere to many question that we have it.
-	#	if serialized.is_valid():
-	#		serialized.save()
-		#for question in question_ids: 
-			# we need to insert question into GameQuestions model
-		#	GameQuestions.objects.create(game_id=game_id, question_id=question)
-
-	#		return Response({
-	#				"message" : "questions inserted into %s " % game_name ,
-	#				"data" : serialized.data
-	#			})
-
-
-		
-
 #  GET ListGameQuestions (game_id):
 #  We need to query on GameQuestions to get all questions related to that game_id
 class JoinGame(generics.GenericAPIView):
@@ -184,7 +124,7 @@ class CreatGame(APIView):
 	#create game for first time
 	def post(self, request, format=None):
 	
-		serializer = LobbySerializer(data=request.data)
+		serializer = LobbySerializer(data=request.data)  # returns the parsed content of the request body
 		if serializer.is_valid():
 			game_obj = serializer.save()
 			current_user = self.request.user

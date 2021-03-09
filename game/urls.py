@@ -11,7 +11,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('answer_single/', api.AnswerView.as_view()),
     path('new_game/', api.CreatGame.as_view()),
-	path("add_game_questions/", api.GameQuestion.as_view()),
+	#path("add_game_questions/", api.GameQuestion.as_view()),
 	path("join_game/", api.JoinGame.as_view() ),
 	#path("game_answer/", api.AnswerView.as_view() ),
    #  path('question/',include(router.urls)),

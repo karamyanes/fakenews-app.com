@@ -66,8 +66,3 @@ class Result(models.Model):
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE, related_name = "spørsmål")
     questioner_id = models.ForeignKey(Player, on_delete=models.CASCADE, related_name = "Player_1")
     respondent_id = models.ForeignKey(Player, on_delete=models.CASCADE, related_name = "Player_2")
-
-
-class GameQuestions(models.Model):
-    question_id = models.ForeignKey(Question, on_delete=models.CASCADE, related_name = "Question")
-    game_id = models.ForeignKey(Lobby, on_delete=models.CASCADE, verbose_name = "related to Lobby")
