@@ -73,7 +73,8 @@ REST_FRAMEWORK = {
      ],
 }
 
-SIMPLE_JWT = {
+#  we use it to increase the time for JWT for token
+SIMPLE_JWT = { 
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
 }
 
