@@ -8,6 +8,7 @@ from .serializers import QuestionListSerializer, AnswerListSerializer, PlayerSer
 from rest_framework.response import Response
 
 
+
 class QuestionView(viewsets.ModelViewSet):
 	"""
 	A simple ViewSet for view, edit and delete Transactions.
@@ -32,19 +33,19 @@ class AnswerView(generics.GenericAPIView):
 		"""
 		# we have to serilaizer the request
 		serializer = self.get_serializer(data=request.data)
-		serializer.is_valid(raise_exception=True)
-
+		serializer.is_valid(raise_exception=True) #  You need to call is_valid during deserialization process before write data to DB. is_valid perform validation of input data and confirm that this data contain all required fields and all fields have correct types.
+		#  raise_exception=True, this exception and return 400 response with the provided errors in form of list or dictionary.
 		# get question correct answer by request.question_id
 		question_id = request.POST['questionid']
 		obj_question = Question.objects.get(pk=question_id)
-		answer = serializer.save()  # save data in db
+		answer = serializer.save()  # save data in db,insert the answer in database
 
 		 
 		current_user = self.request.user
 		# we will update the is_correct field if 'user answer' is same / correct "question answer"
 		if request.POST['answer_text'] == obj_question.correct_answer:
-			answer.is_correct = True
-			answer.save()  # To save the answer in db
+			answer.is_correct = True 
+			answer.save()  # To update / set  is correct field with True in database
 			# insert into player
 			#Player.objects.get_or_create(user=current_user, game_id=10000)  # game id = 10000 is single player game_id
 			game_obj = Lobby.objects.get(pk=10000)
@@ -98,9 +99,17 @@ class JoinGame(generics.GenericAPIView):
 		game_obj = Lobby.objects.get(pk=game_id)  # we make query on lobby table by primery key =  game_id
 		num_of_players = game_obj.num_of_players  # we bring from game_obj num_of_players and current_players
 		current_players = game_obj.current_players 
-		player_obj = Player.objects.get(game_id=game_id)
-			# we check if current_players smaller than num_of_players and we not alowed the same user to join the same game again
-		if current_players < num_of_players and player_obj.user.id != int(request.POST['user']) and player_obj.user_status != request.POST['user_status'] :
+		current_user = self.request.user
+		#player_obj = Player.objects.get(game_id=game_id,user=current_user)
+		# we check if current_players smaller than num_of_players and we not alowed the same user to join the same game again
+		#player_obj.user_status != request.POST['user_status'] :
+		#if player_obj:
+		#	if player_obj.user.id == current_user or player_obj.user_status == 'respondent' : 
+		#		return Response({
+		#			'message' : ' user already joined the game',
+		#		})
+		#we need to remove user status and user id in postman 
+		if current_players < num_of_players:
 			serializer = self.get_serializer(data=request.data)
 			serializer.is_valid(raise_exception=True)
 			#current_user = self.request.user
@@ -127,6 +136,8 @@ class CreatGame(APIView):
 		serializer = LobbySerializer(data=request.data)  # returns the parsed content of the request body
 		if serializer.is_valid():
 			game_obj = serializer.save()
+			game_obj.current_players = 1 # we update current_players with 1 because questioner is first player. and in database the default value for current_player is 0
+			game_obj.save()
 			current_user = self.request.user
 			try:
 				player_obj = Player.objects.create(user=current_user, game_id=game_obj, user_status='questioner')
@@ -150,3 +161,45 @@ class CreatGame(APIView):
 					})
 
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MultiPlayerAnswer(generics.GenericAPIView):
+	serializer_class = AnswerListSerializer
+	permission_classes = [permissions.IsAuthenticated]
+
+	def post(self, request, *args, **kwargs):
+		serializer = self.get_serializer(data=request.data)  
+		serializer.is_valid(raise_exception=True)
+		question_id = request.POST['questionid']
+		game_id = request.POST['game_id']
+		current_user = self.request.user
+		player_obj = Player.objects.get(game_id=game_id, user=current_user)
+		obj_question = Question.objects.get(pk=question_id)
+		lobby_obj = Lobby.objects.get(pk=game_id)
+		# player_obj.user_status == 'respondent' and player_obj.user != current_user and request.POST['answer_text'] == obj_question.correct_answer:
+		if not lobby_obj :
+			return Response({
+				"message" : "Game not correct" ,
+			})
+		if  player_obj.user_status != 'respondent':
+			return Response({
+				"message" : "Wrong user" ,
+			})
+		if request.POST['answer_text'] == obj_question.correct_answer:
+			answer = serializer.save()
+			answer.is_correct = True
+			answer.save()				
+			return Response({
+				"message" : "your answer is correct",
+				"answer" : AnswerListSerializer(answer, context=self.get_serializer_context()).data,
+			})
+		if request.POST['answer_text'] != obj_question.correct_answer:
+			answer = serializer.save()
+			answer.is_correct = False
+			answer.save()	
+			return Response({
+				"message" : "your answer is wrong" ,
+			})
+		else : 
+			return Response({
+				"message" : "unknown error please try again" ,
+			})

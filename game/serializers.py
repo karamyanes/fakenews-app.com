@@ -36,3 +36,5 @@ class LobbySerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Lobby
 		fields = "__all__"
+
+
