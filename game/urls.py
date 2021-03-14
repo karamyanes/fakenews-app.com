@@ -14,5 +14,5 @@ urlpatterns = [
 	#path("add_game_questions/", api.GameQuestion.as_view()),
 	path("join_game/", api.JoinGame.as_view() ),
 	path("answer_game/", api.MultiPlayerAnswer.as_view() ),
-    #path("available_game/", api.ListAvailableGames.as_view() ),
+    path("available_game/", api.ListAvailableGames.as_view() ),
 ]

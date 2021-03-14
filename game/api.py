@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.db.models import F
 from rest_framework import generics, permissions, response, viewsets,status
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
@@ -6,6 +7,8 @@ from django.contrib.auth.models import User
 from .models import Lobby, UserQuestionHistory, Player, Question, Answer, Result
 from .serializers import QuestionListSerializer, AnswerListSerializer, PlayerSerializer, LobbySerializer
 from rest_framework.response import Response
+import json
+from django.core import serializers
 
 
 
@@ -110,6 +113,10 @@ class JoinGame(generics.GenericAPIView):
 		#		})
 		#we need to remove user status and user id in postman 
 		if current_players < num_of_players:
+			request.data._mutable = True # to enable updating data
+			request.data['user_status'] = 'respondent'
+			request.data['user'] = current_user.id
+			request.data._mutable = False # to disable updating data (im_mutable) we do imutable and immutable because database donot accept mutable data
 			serializer = self.get_serializer(data=request.data)
 			serializer.is_valid(raise_exception=True)
 			#current_user = self.request.user
@@ -203,3 +210,19 @@ class MultiPlayerAnswer(generics.GenericAPIView):
 			return Response({
 				"message" : "unknown error please try again" ,
 			})
+
+
+class ListAvailableGames(generics.ListAPIView):
+	serializer_class = LobbySerializer
+
+	def get(self, request):
+		queryset = Lobby.objects.filter(current_players__lt = F('num_of_players')) # lt = lessthan
+		tmpJson = serializers.serialize("json", queryset) # we convert queryset to serializable Json  Object
+		result = json.loads(tmpJson)  # we load tmJson Object
+		
+		if queryset:
+			return Response({
+                "message" : "Games listed successfully",
+                "games" : result,
+                "status": status.HTTP_201_CREATED
+            })
