@@ -103,14 +103,14 @@ class JoinGame(generics.GenericAPIView):
 		num_of_players = game_obj.num_of_players  # we bring from game_obj num_of_players and current_players
 		current_players = game_obj.current_players 
 		current_user = self.request.user
-		#player_obj = Player.objects.get(game_id=game_id,user=current_user)
+		player_obj = Player.objects.get(game_id=game_id,user=current_user)
 		# we check if current_players smaller than num_of_players and we not alowed the same user to join the same game again
 		#player_obj.user_status != request.POST['user_status'] :
-		#if player_obj:
-		#	if player_obj.user.id == current_user or player_obj.user_status == 'respondent' : 
-		#		return Response({
-		#			'message' : ' user already joined the game',
-		#		})
+		if player_obj:
+			if player_obj.user.id == current_user.id:  #or player_obj.user_status == 'respondent' : 
+				return Response({
+					'message' : ' user already joined the game',
+				})
 		#we need to remove user status and user id in postman 
 		if current_players < num_of_players:
 			request.data._mutable = True # to enable updating data
