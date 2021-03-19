@@ -104,10 +104,11 @@ class JoinGame(generics.GenericAPIView):
 		num_of_players = game_obj.num_of_players  # we bring from game_obj num_of_players and current_players
 		current_players = game_obj.current_players 
 		current_user = self.request.user
-		player_obj = Player.objects.get(game_id=game_id,user=current_user)
+		#player_obj = Player.objects.get(game_id=game_id,user=current_user)
 		# we check if current_players smaller than num_of_players and we not alowed the same user to join the same game again
 		#player_obj.user_status != request.POST['user_status'] :
-		if player_obj:
+		if Player.objects.filter(game_id=game_id,user=current_user).exists():
+			player_obj = Player.objects.get(game_id=game_id,user=current_user)
 			if player_obj.user.id == current_user.id:  #or player_obj.user_status == 'respondent' : 
 				return Response({
 					'message' : ' user already joined the game',
@@ -124,9 +125,13 @@ class JoinGame(generics.GenericAPIView):
 			serializer.save()
 			new_count_player = current_players + 1
 			Lobby.objects.filter(pk=game_id).update( current_players = new_count_player)
+			questions_obj = Question.objects.filter(game_id=game_id)
+			tmpJson = serializers.serialize("json", questions_obj) # we convert queryset to serializable Json  Object
+			result = json.loads(tmpJson)
 			return Response({
 				'message' : ' sucsefull join the game',
 				'player' : serializer.data,
+				'questions' : result,
 			})
 		else:
 			return Response({'message' : 'no places game is full or you allready joined the game',})
@@ -238,12 +243,13 @@ class QuestionGame(generics.GenericAPIView):
 		# we need to updat data with game_id
 		serializer = self.get_serializer(data=request.data)  
 		serializer.is_valid(raise_exception=True)
-		question =serializer.save()
+		serializer.save()
+		#question =serializer.save()
+		#print(question)
 		return Response({
                 "message" : "question added successfully",
-                "question" : question,
+                "question" : serializer.data,
                 "status": status.HTTP_201_CREATED
             })
 		#question_id = request.POST['questionid']
 		#correct_answer = request.POST['correct_answer']
-
