@@ -1,3 +1,4 @@
+from django.db import models
 from django.db.models import Q
 from django.db.models import F
 from rest_framework import generics, permissions, response, viewsets,status
@@ -18,7 +19,7 @@ class QuestionView(viewsets.ModelViewSet):
 	"""
 	queryset = Question.objects.all()
 	serializer_class = QuestionListSerializer
-	# permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
+	permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
 
 
 class AnswerView(generics.GenericAPIView):
@@ -226,3 +227,23 @@ class ListAvailableGames(generics.ListAPIView):
                 "games" : result,
                 "status": status.HTTP_201_CREATED
             })
+
+
+class QuestionGame(generics.GenericAPIView):
+	serializer_class = QuestionListSerializer
+	permission_classes = [permissions.IsAuthenticated]
+
+	def post(self, request, *args, **kwargs):
+		#game_id = request.POST['game_id']
+		# we need to updat data with game_id
+		serializer = self.get_serializer(data=request.data)  
+		serializer.is_valid(raise_exception=True)
+		question =serializer.save()
+		return Response({
+                "message" : "question added successfully",
+                "question" : question,
+                "status": status.HTTP_201_CREATED
+            })
+		#question_id = request.POST['questionid']
+		#correct_answer = request.POST['correct_answer']
+
