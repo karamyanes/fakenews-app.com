@@ -1,4 +1,4 @@
-from .models import  Lobby, UserQuestionHistory , Player, Question, Answer, Result
+from .models import Lobby, Player, Question, Answer, LobbyQuestion
 from rest_framework import serializers
 
 
@@ -20,21 +20,13 @@ class AnswerListSerializer(serializers.ModelSerializer):
 		fields = "__all__"
 
 
-class ResultListSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Result
-		fields = "__all__"
-
-
-class UserQuestionHistoryListSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = UserQuestionHistory
-		fields = "__all__"
-
-
 class LobbySerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Lobby
 		fields = "__all__"
 
 
+class LobbyQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LobbyQuestion
+        fields = "__all__"

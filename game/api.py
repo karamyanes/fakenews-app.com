@@ -5,8 +5,8 @@ from rest_framework import generics, permissions, response, viewsets,status
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from .models import Lobby, UserQuestionHistory, Player, Question, Answer, Result
-from .serializers import QuestionListSerializer, AnswerListSerializer, PlayerSerializer, LobbySerializer
+from .models import Lobby, LobbyQuestion, Player, Question, Answer
+from .serializers import QuestionListSerializer, AnswerListSerializer, PlayerSerializer, LobbySerializer, LobbyQuestionSerializer
 from rest_framework.response import Response
 import json
 from django.core import serializers
@@ -253,3 +253,12 @@ class QuestionGame(generics.GenericAPIView):
             })
 		#question_id = request.POST['questionid']
 		#correct_answer = request.POST['correct_answer']
+
+
+class LobbyQuestionView(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for view, edit and delete LobbyQuestions.
+    """
+    queryset = LobbyQuestion.objects.all()
+    serializer_class = LobbyQuestionSerializer
+    permission_classes = [permissions.IsAuthenticated]

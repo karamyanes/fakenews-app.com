@@ -9,7 +9,6 @@ class Lobby(models.Model):
     current_players = models.IntegerField(default=0)
 
 
-
 class Question(models.Model):
     STATUS=(
         ('true','true'),
@@ -20,7 +19,7 @@ class Question(models.Model):
     )
     question_text = models.CharField(max_length=2000)
     correct_answer = models.CharField(max_length=100,choices=STATUS)
-    game_id =  models.ForeignKey(Lobby, default=10000, on_delete=models.CASCADE, verbose_name = "related to Lobby")# we added game id with default value 10000 because single player game has id 10000
+
     def __str__(self):
         return self.question_text
 
@@ -55,14 +54,8 @@ class Player(models.Model):
     
     def str(self):
         return self.user.username
-    
-class UserQuestionHistory(models.Model):
-    questioner_id = models.ForeignKey(Player, on_delete=models.CASCADE, related_name = "questioner")
-    respoender_id = models.ForeignKey(Player, on_delete=models.CASCADE, related_name = "respoender")
 
 
-class Result(models.Model):
-    answer_id = models.ForeignKey(Answer, on_delete=models.CASCADE, related_name = "Answer") 
-    question_id = models.ForeignKey(Question, on_delete=models.CASCADE, related_name = "spørsmål")
-    questioner_id = models.ForeignKey(Player, on_delete=models.CASCADE, related_name = "Player_1")
-    respondent_id = models.ForeignKey(Player, on_delete=models.CASCADE, related_name = "Player_2")
+class LobbyQuestion(models.Model):
+    question_id = models.ForeignKey(Question, on_delete=models.CASCADE, related_name = "question")
+    game_id = models.ForeignKey(Lobby, on_delete=models.CASCADE, related_name = "lobby")
