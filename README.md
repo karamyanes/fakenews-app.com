@@ -23,3 +23,10 @@
 - Update settings file with database settings.
 - Added users app `./manage.py startapp users`
 - Added questionnaire app `./manage.py startapp questionnaire`
+
+
+## Swagger endpoints access:
+- To access (Swagger) `http://localhost:3000/swagger/`
+- - Login first with username & password
+- - Copy the access value from token.
+- - Click Authorize (top right), add this inside value field: `Bearer TOKEN_ACCESS`

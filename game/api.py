@@ -275,7 +275,7 @@ class AddLobbyQuestions(generics.GenericAPIView):
 		for question in question_ids:
 			print(question)
 			data = {}
-			data['question_id'] = question
+			data['question_id'] = question.id
 			data['game_id'] = game_id
 			serializer = self.get_serializer(data=data)  
 			serializer.is_valid(raise_exception=True)
