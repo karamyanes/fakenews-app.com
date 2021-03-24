@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'game',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -76,7 +77,10 @@ REST_FRAMEWORK = {
 #  we use it to increase the time for JWT for token
 SIMPLE_JWT = { 
     'ACCESS_TOKEN_LIFETIME': timedelta(days=50),
+<<<<<<< HEAD
     'REFRESH_TOKEN_LIFETIME': timedelta(days=50),
+=======
+>>>>>>> a05c0c452b616454bdd61d1c97ed0917456bba92
 }
 
 ROOT_URLCONF = 'quiz.urls'
@@ -152,3 +156,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Swagger settings
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
+}
