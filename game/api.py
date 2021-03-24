@@ -262,3 +262,27 @@ class LobbyQuestionView(viewsets.ModelViewSet):
     queryset = LobbyQuestion.objects.all()
     serializer_class = LobbyQuestionSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class AddLobbyQuestions(generics.GenericAPIView):
+	serializer_class = LobbyQuestionSerializer
+	permission_classes = [permissions.IsAuthenticated]
+
+	def post(self, request, *args, **kwargs):
+		question_ids =request.POST['question_ids']
+		game_id = request.POST['game_id']
+		print(type(request.POST['question_ids']))
+		for question in question_ids:
+			print(question)
+			data = {}
+			data['question_id'] = question
+			data['game_id'] = game_id
+			serializer = self.get_serializer(data=data)  
+			serializer.is_valid(raise_exception=True)
+			serializer.save()
+		
+		return Response({
+                "message" : "questions added successfully",
+                "question" : serializer.data,
+                "status": status.HTTP_201_CREATED
+            })
