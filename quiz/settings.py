@@ -77,10 +77,7 @@ REST_FRAMEWORK = {
 #  we use it to increase the time for JWT for token
 SIMPLE_JWT = { 
     'ACCESS_TOKEN_LIFETIME': timedelta(days=50),
-<<<<<<< HEAD
     'REFRESH_TOKEN_LIFETIME': timedelta(days=50),
-=======
->>>>>>> a05c0c452b616454bdd61d1c97ed0917456bba92
 }
 
 ROOT_URLCONF = 'quiz.urls'
