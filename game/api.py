@@ -62,9 +62,8 @@ class AnswerView(generics.GenericAPIView):
 			Player.objects.filter(user=current_user).update(user_status='single_player')
 			
 			# update score
-			current_player = Player.objects.get(user=current_user)  # user her is refere to the user field in Player model (table)
-			new_score = current_player.score + 1  # get the current_score and increase it 
-			Player.objects.filter(user=current_user).update( score = new_score )  #  updating the user score with new value
+			new_score = obj.score + 1  # get the current_score and increase it 
+			Player.objects.filter(user=current_user, game_id=game_obj).update( score = new_score )  #  updating the user score with new value
 
 			return Response({
 				"answer" : AnswerListSerializer(answer, context=self.get_serializer_context()).data,
@@ -125,11 +124,20 @@ class JoinGame(generics.GenericAPIView):
 			serializer.save()
 			new_count_player = current_players + 1
 			Lobby.objects.filter(pk=game_id).update( current_players = new_count_player)
-			questions_obj = Question.objects.filter(game_id=game_id)
-			tmpJson = serializers.serialize("json", questions_obj) # we convert queryset to serializable Json  Object
-			result = json.loads(tmpJson)
+			if  LobbyQuestion.objects.filter(game_id=game_id).exists():
+				b = LobbyQuestion.objects.select_related('question_id')
+				#questions_obj = Question.objects.filter(pk=b['question_id'])
+				print('selectretetlathaltjatlakjthlat')
+				print( b)
+				print('selectretetlathaltjatlakjthlat')
+				questions_obj =  LobbyQuestion.objects.filter(game_id=game_id)
+				print(questions_obj)
+				tmpJson = serializers.serialize("json", questions_obj) # we convert queryset to serializable Json  Object
+				result = json.loads(tmpJson)
+			else: 
+				result = 'there are no questions'
 			return Response({
-				'message' : ' sucsefull join the game',
+				'message' : 'sucsefull join the game',
 				'player' : serializer.data,
 				'questions' : result,
 			})
