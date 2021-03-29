@@ -46,13 +46,14 @@ class AnswerView(generics.GenericAPIView):
 
 		 
 		current_user = self.request.user
+		game_obj = Lobby.objects.get(pk=10000)
 		# we will update the is_correct field if 'user answer' is same / correct "question answer"
 		if request.POST['answer_text'] == obj_question.correct_answer:
 			answer.is_correct = True 
 			answer.save()  # To update / set  is correct field with True in database
 			# insert into player
 			#Player.objects.get_or_create(user=current_user, game_id=10000)  # game id = 10000 is single player game_id
-			game_obj = Lobby.objects.get(pk=10000)
+			#game_obj = Lobby.objects.get(pk=10000)
 			try:
 				obj = Player.objects.get(user=current_user, game_id=game_obj.id)
 			except Player.DoesNotExist:
@@ -70,11 +71,11 @@ class AnswerView(generics.GenericAPIView):
 				"score"  : new_score,
 			})
 		else : 
-			current_player = Player.objects.get(user=current_user)
-			score = current_player.score
+			current_player = Player.objects.get(user=current_user,game_id=game_obj.id)
+			#score = current_player.score
 			return Response({
 				"message" : "your answer is not correct" ,
-				"score"  : score,
+			#	"score"  : score,
 			})
 			
 		 		 
