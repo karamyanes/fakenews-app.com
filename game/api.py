@@ -70,8 +70,8 @@ class AnswerView(generics.GenericAPIView):
 				"score"  : new_score,
 			})
 		else : 
-			#current_player = Player.objects.get(user=current_user)
-			#score = current_player.score
+			current_player = Player.objects.get(user=current_user)
+			score = current_player.score
 			return Response({
 				"message" : "your answer is not correct" ,
 				#"score"  : score,
@@ -130,17 +130,17 @@ class JoinGame(generics.GenericAPIView):
 				questions_set = set()
 				for e in LobbyQuestion.objects.filter(game_id=game_id).select_related('question_id'):
 					questions_set.add(e.question_id)
-				questions_obj =  LobbyQuestion.objects.filter(game_id=game_id)
+				#questions_obj =  LobbyQuestion.objects.filter(game_id=game_id)
 				questions_set_json = serializers.serialize("json", questions_set)
 				questions_set_result = json.loads(questions_set_json)
-				tmpJson = serializers.serialize("json", questions_obj) # we convert queryset to serializable Json  Object
-				result = json.loads(tmpJson)
+				#tmpJson = serializers.serialize("json", questions_obj) # we convert queryset to serializable Json  Object
+				#result = json.loads(tmpJson)
 			else: 
 				result = 'there are no questions'
 			return Response({
 				'message' : 'sucsefull join the game',
 				'player' : serializer.data,
-				'questions' : result,
+				#'questions' : result,
 				'question_set' : questions_set_result,
 			})
 		else:
