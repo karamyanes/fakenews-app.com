@@ -74,7 +74,7 @@ class AnswerView(generics.GenericAPIView):
 			score = current_player.score
 			return Response({
 				"message" : "your answer is not correct" ,
-				#"score"  : score,
+				"score"  : score,
 			})
 			
 		 		 
