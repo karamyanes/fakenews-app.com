@@ -12,8 +12,7 @@ from rest_framework_simplejwt.state import token_backend
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        # fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name')
-        fields = ('id', 'username', 'email', 'password')
+        fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name')
         extra_kwargs = {
             'password':{'write_only': True},
         }
@@ -23,8 +22,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             validated_data['username'],
             email = validated_data['email'],
             password = validated_data['password'],
-            #first_name=validated_data['first_name'],
-            #last_name=validated_data['last_name']
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name']
         )
         return user
 
