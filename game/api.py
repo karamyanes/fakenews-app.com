@@ -121,30 +121,32 @@ class JoinGame(generics.GenericAPIView):
 			request.data._mutable = False # to disable updating data (im_mutable) we do imutable and immutable because database donot accept mutable data
 			serializer = self.get_serializer(data=request.data)
 			serializer.is_valid(raise_exception=True)
-			#current_user = self.request.user
-			serializer.save()
-			new_count_player = current_players + 1
-			Lobby.objects.filter(pk=game_id).update( current_players = new_count_player)
+
 			if  LobbyQuestion.objects.filter(game_id=game_id).exists():
-				#b = LobbyQuestion.objects.select_related('question_id')
-				#questions_obj = Question.objects.filter(pk=b['question_id'])
 				questions_set = set()
 				for e in LobbyQuestion.objects.filter(game_id=game_id).select_related('question_id'):
 					questions_set.add(e.question_id)
-				#questions_obj =  LobbyQuestion.objects.filter(game_id=game_id)
+
 				questions_set_json = serializers.serialize("json", questions_set)
 				questions_set_result = json.loads(questions_set_json)
-				#tmpJson = serializers.serialize("json", questions_obj) # we convert queryset to serializable Json  Object
-				#result = json.loads(tmpJson)
+				# finally saving serializer after making sure that game has questions 
+				# ... also after making sure serializer is valid 
+				serializer.save()
+				new_count_player = current_players + 1
+				Lobby.objects.filter(pk=game_id).update( current_players = new_count_player)
+
+				return Response({
+						'message' : 'sucsefull join the game',
+						'player' : serializer.data,
+						'question_set' : questions_set_result,
+					})
 			else: 
-				result = 'there are no questions'
-			return Response({
-				'message' : 'sucsefull join the game',
-				'player' : serializer.data,
-				#'questions' : result,
-				'question_set' : questions_set_result,
-			})
+				#  there are no questions in the game so user can not join the game 
+				return Response({
+					'restult' : 'You can not join the game because there are no questions',
+					})	
 		else:
+			#  the game is full so user can not join
 			return Response({'message' : 'no places game is full or you allready joined the game',})
 			
 		
