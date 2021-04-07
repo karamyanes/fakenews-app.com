@@ -1,12 +1,3 @@
-[
-    {
-        "model" : "game.lobby",
-        "pk" : 10000,
-        "fields" : {
-            "game_name" : "single_player",
-            "num_of_players" : 1,
-            "current_players" : 1
-
-        }
-    }
-]
+version https://git-lfs.github.com/spec/v1
+oid sha256:f4a61079688f47d84892783f1e48c0499ca93c090ac37ef12bf6211925dda8e6
+size 223
