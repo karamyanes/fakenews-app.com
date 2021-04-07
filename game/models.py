@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.base import Model
-
+from jsonfield import JSONField
 
 class Lobby(models.Model):
     game_name = models.CharField(max_length=20)
@@ -16,9 +16,21 @@ class Question(models.Model):
         ('false','false'),
         ('mostly-true','mostly-true'),
         ('pants-fire','pants-fire'),
+        ('half-true','half-true'),
     )
-    question_text = models.CharField(max_length=2000)
+    question_text = models.JSONField()
     correct_answer = models.CharField(max_length=100,choices=STATUS)
+    url = models.CharField(max_length=2000,null=True)
+    stated_in = models.CharField(max_length=500,null=True)
+    speaker = models.CharField(max_length=100,null=True)
+    factchecker = models.CharField(max_length=50,null=True)
+    published = models.DateField(null=True)
+    date_stated = models.DateField(null=True)
+    topic = models.TextField(null=True)
+    sources = models.JSONField(default=list)
+    doc= models.JSONField()
+    summary = models.JSONField(null=True)
+    
 
     def __str__(self):
         return self.question_text
