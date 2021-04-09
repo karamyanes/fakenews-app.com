@@ -19,7 +19,7 @@ class QuestionView(viewsets.ModelViewSet):
 	"""
 	queryset = Question.objects.all()
 	serializer_class = QuestionListSerializer
-	permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
+	#permission_classes = [permissions.IsAuthenticated] #this permission we need to be sure that only permited user can use this url
 
 
 class AnswerView(generics.GenericAPIView):
@@ -71,7 +71,7 @@ class AnswerView(generics.GenericAPIView):
 				"score"  : new_score,
 			})
 		else : 
-			current_player = Player.objects.get(user=current_user,game_id=game_obj.id)
+			#current_player = Player.objects.get(user=current_user,game_id=game_obj.id)
 			#score = current_player.score
 			return Response({
 				"message" : "your answer is not correct" ,
