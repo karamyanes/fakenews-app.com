@@ -71,3 +71,4 @@ class Player(models.Model):
 class LobbyQuestion(models.Model):
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE, related_name = "question")
     game_id = models.ForeignKey(Lobby, on_delete=models.CASCADE, related_name = "lobby")
+    doc_hint = models.JSONField(null=True, blank=True)
