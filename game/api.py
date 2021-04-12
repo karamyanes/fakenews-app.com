@@ -126,9 +126,10 @@ class JoinGame(generics.GenericAPIView):
 				questions_set = set()
 				for e in LobbyQuestion.objects.filter(game_id=game_id).select_related('question_id'):
 					questions_set.add(e.question_id)
-
+				
 				questions_set_json = serializers.serialize("json", questions_set)
 				questions_set_result = json.loads(questions_set_json)
+				print(questions_set_result)
 				# finally saving serializer after making sure that game has questions 
 				# ... also after making sure serializer is valid 
 				serializer.save()
@@ -275,3 +276,21 @@ class LobbyQuestionView(viewsets.ModelViewSet):
     queryset = LobbyQuestion.objects.all()
     serializer_class = LobbyQuestionSerializer
     #permission_classes = [permissions.IsAuthenticated]
+
+
+class LobbyQuestionUpdate(APIView):
+	queryset = LobbyQuestion.objects.all()
+	serializer_class = LobbyQuestionSerializer
+	print('before put')
+
+	def put(self, request, *args, **kwargs):
+		print('after put')
+		return self.update(request, *args, **kwargs)
+
+	#serializer_class = LobbyQuestionSerializer
+
+	#def put(self, request, *args, **kwargs):
+	#	question_id = self.kwargs['question_id'] 
+	#	game_id = self.kwargs['game_id'] 
+	#	queryset = Lobby.objects.filter(game_id=game_id).filter(question_id=question_id)
+	#	return self.update 
