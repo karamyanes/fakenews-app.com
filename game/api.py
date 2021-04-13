@@ -140,7 +140,7 @@ class JoinGame(generics.GenericAPIView):
 				return Response({
 						'message' : 'sucsefull join the game',
 						'player' : serializer.data,
-						'question_set' : questions_set_result,
+						'question_set' : questions_set_result, 
 					})
 			else: 
 				#  there are no questions in the game so user can not join the game 
@@ -291,5 +291,19 @@ class LobbyQuestionUpdate(APIView):
 		question_object.save()
 		return Response({
                 "message" : "doc updated sucsessfuly",
-                "status": status.HTTP_201_CREATED
+                "status": status.HTTP_201_CREATED,
+				"doc_hint": request.POST['doc_hint'],
+            })
+
+
+class GetHint(APIView):
+	queryset = LobbyQuestion.objects.all()
+	serializer_class = LobbyQuestionSerializer
+
+	def get(self, request,*args, **kwargs ):
+		game_id = self.kwargs['game_id']
+		question_id = self.kwargs['question_id']
+		question_object = LobbyQuestion.objects.get(question_id=question_id,game_id=game_id)
+		return Response({
+				"doc_hint": question_object.doc_hint,
             })

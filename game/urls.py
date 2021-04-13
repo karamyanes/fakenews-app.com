@@ -17,5 +17,6 @@ urlpatterns = [
     path("available_game/", api.ListAvailableGames.as_view()),
     path("question_game/", api.QuestionGame.as_view()),
     path('lobby_doc/<game_id>/<question_id>/', api.LobbyQuestionUpdate.as_view(), name='LobbyQuestionUpdate'),
+    path('get_hint/<game_id>/<question_id>/', api.GetHint.as_view(), name='GetHint'),
     #path('addgame_questions/', api.AddLobbyQuestions.as_view()),
 ]
