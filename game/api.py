@@ -10,6 +10,7 @@ from .serializers import QuestionListSerializer, AnswerListSerializer, PlayerSer
 from rest_framework.response import Response
 import json
 from django.core import serializers
+from rest_framework.throttling import UserRateThrottle
 
 
 
@@ -281,16 +282,14 @@ class LobbyQuestionView(viewsets.ModelViewSet):
 class LobbyQuestionUpdate(APIView):
 	queryset = LobbyQuestion.objects.all()
 	serializer_class = LobbyQuestionSerializer
-	print('before put')
 
 	def put(self, request, *args, **kwargs):
-		print('after put')
-		return self.update(request, *args, **kwargs)
-
-	#serializer_class = LobbyQuestionSerializer
-
-	#def put(self, request, *args, **kwargs):
-	#	question_id = self.kwargs['question_id'] 
-	#	game_id = self.kwargs['game_id'] 
-	#	queryset = Lobby.objects.filter(game_id=game_id).filter(question_id=question_id)
-	#	return self.update 
+		game_id = self.kwargs['game_id']
+		question_id = self.kwargs['question_id']
+		question_object = LobbyQuestion.objects.get(question_id=question_id,game_id=game_id)
+		question_object.doc_hint = request.POST['doc_hint']
+		question_object.save()
+		return Response({
+                "message" : "doc updated sucsessfuly",
+                "status": status.HTTP_201_CREATED
+            })

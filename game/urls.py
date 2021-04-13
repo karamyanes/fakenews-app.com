@@ -16,6 +16,6 @@ urlpatterns = [
 	path("answer_game/", api.MultiPlayerAnswer.as_view() ),
     path("available_game/", api.ListAvailableGames.as_view()),
     path("question_game/", api.QuestionGame.as_view()),
-    path('lobby_doc/(?P<game_id>\d+)/(?P<question_id>\d+)/', api.LobbyQuestionUpdate.as_view(), name='LobbyQuestionUpdate'),
+    path('lobby_doc/<game_id>/<question_id>/', api.LobbyQuestionUpdate.as_view(), name='LobbyQuestionUpdate'),
     #path('addgame_questions/', api.AddLobbyQuestions.as_view()),
 ]
