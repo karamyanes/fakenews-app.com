@@ -303,8 +303,8 @@ class ScoreUpdate(APIView):
 	def put(self, request, *args, **kwargs):
 		game_id = self.kwargs['game_id']
 		user_status= self.kwargs['user_status']
-		user_id = self.kwargs['user_id']
-		score_object = Player.objects.get(game_id=game_id, user_status=user_status, user_id=user_id)
+		#user_id = self.kwargs['user_id']
+		score_object = Player.objects.get(game_id=game_id, user_status=user_status)
 		score_object.score = request.POST['score']
 		score_object.save()
 		return Response({
@@ -334,8 +334,8 @@ class GetScore(APIView):
 	def get(self, request,*args, **kwargs ):
 		game_id = self.kwargs['game_id']
 		user_status = self.kwargs['user_status']
-		user_id = self.kwargs['user_id']
-		score_object = Player.objects.get(user_status=user_status, game_id=game_id, user_id=user_id)
+		#user_id = self.kwargs['user_id']
+		score_object = Player.objects.get(user_status=user_status, game_id=game_id)
 		return Response({
 				"score": score_object.score,
             })
