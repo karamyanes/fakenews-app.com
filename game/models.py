@@ -72,3 +72,4 @@ class LobbyQuestion(models.Model):
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE, related_name = "question")
     game_id = models.ForeignKey(Lobby, on_delete=models.CASCADE, related_name = "lobby")
     doc_hint = models.CharField(max_length=8000, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
