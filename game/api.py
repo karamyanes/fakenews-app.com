@@ -296,6 +296,23 @@ class LobbyQuestionUpdate(APIView):
             })
 
 
+class ScoreUpdate(APIView):
+	queryset = Player.objects.all()
+	serializer_class = PlayerSerializer
+
+	def put(self, request, *args, **kwargs):
+		game_id = self.kwargs['game_id']
+		user_status= self.kwargs['user_status']
+		score_object = Player.objects.get(game_id=game_id, user_status=user_status)
+		score_object.score = request.POST['score']
+		score_object.save()
+		return Response({
+			"message" : "score updated sucsessfuly",
+                "status": status.HTTP_201_CREATED,
+				"score": request.POST['score'],
+		})
+
+
 class GetHint(APIView):
 	queryset = LobbyQuestion.objects.all()
 	serializer_class = LobbyQuestionSerializer
@@ -306,4 +323,17 @@ class GetHint(APIView):
 		question_object = LobbyQuestion.objects.get(question_id=question_id,game_id=game_id)
 		return Response({
 				"doc_hint": question_object.doc_hint,
+            })
+
+
+class GetScore(APIView):
+	queryset = Player.objects.all()
+	serializer_class = PlayerSerializer
+
+	def get(self, request,*args, **kwargs ):
+		game_id = self.kwargs['game_id']
+		user_status = self.kwargs['user_status']
+		score_object = LobbyQuestion.objects.get(user_status=user_status,game_id=game_id)
+		return Response({
+				"score": score_object.score,
             })
