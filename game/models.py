@@ -39,10 +39,10 @@ class Question(models.Model):
 class Answer(models.Model):
     STATUS=(
         ('true','true'),
-        ('barely-true','barely-true'),
+        ('barely true','barely true'),
         ('false','false'),
-        ('mostly-true','mostly-true'),
-        ('pants-fire','pants-fire'),
+        ('mostly true','mostly true'),
+        ('pants on fire','pants on fire'),
     )
     questionid = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name = "related to Question")
     answer_text = models.CharField(max_length=256,choices=STATUS)
