@@ -7,7 +7,8 @@ class Lobby(models.Model):
     game_name = models.CharField(max_length=20)
     num_of_players = models.IntegerField(default=2)
     current_players = models.IntegerField(default=0)
-
+    join_successfuly = models.TextField(max_length=100,null=True, blank=True)
+    
 
 class Question(models.Model):
     STATUS=(
@@ -72,4 +73,5 @@ class LobbyQuestion(models.Model):
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE, related_name = "question")
     game_id = models.ForeignKey(Lobby, on_delete=models.CASCADE, related_name = "lobby")
     doc_hint = models.CharField(max_length=8000, null=True, blank=True)
+    
     #timestamp = models.DateTimeField(auto_now_add=True)

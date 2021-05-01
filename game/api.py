@@ -294,6 +294,22 @@ class LobbyQuestionUpdate(APIView):
                 "status": status.HTTP_201_CREATED,
 				"doc_hint": request.POST['doc_hint'],
             })
+			
+
+class JoinSuccessful(APIView):
+	queryset = Lobby.objects.all()
+	serializer_class = LobbySerializer
+
+	def put(self, request, *args, **kwargs):
+		game_name = self.kwargs['game_name']
+		join_object = Lobby.objects.get(pk=game_name)
+		join_object.join_successfuly = request.POST['join_successfuly']
+		join_object.save()
+		return Response({
+                "message" : "Player join successfuly",
+                "status": status.HTTP_201_CREATED,
+				"join_successfuly": request.POST['join_successfuly'],
+            })
 
 
 class ScoreUpdate(APIView):
@@ -324,6 +340,18 @@ class GetHint(APIView):
 		question_object = LobbyQuestion.objects.get(question_id=question_id,game_id=game_id)
 		return Response({
 				"doc_hint": question_object.doc_hint,
+            })
+
+
+class GetJoinSuccessful(APIView):
+	queryset = Lobby.objects.all()
+	serializer_class = LobbySerializer
+
+	def get(self, request, *args, **kwargs):
+		game_name = self.kwargs['game_name']
+		join_object = Lobby.objects.get(pk=game_name)
+		return Response({
+				"join_successfuly": join_object.join_successfuly,
             })
 
 
