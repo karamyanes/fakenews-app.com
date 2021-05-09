@@ -47,7 +47,7 @@ class AnswerView(generics.GenericAPIView):
 
 		 
 		current_user = self.request.user
-		game_obj = Lobby.objects.get(pk=10000)
+		game_obj = Lobby.objects.get(pk=1)
 		# we will update the is_correct field if 'user answer' is same / correct "question answer"
 		if request.POST['answer_text'] == obj_question.correct_answer:
 			answer.is_correct = True 

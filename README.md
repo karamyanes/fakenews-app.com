@@ -13,7 +13,7 @@
 - Make migrations: `./manage.py makemigrations` 
 - Migrate: `./manage.py migrate`
 - Run the following command inside docker container ID : `python manage.py loaddata game/fixtures/single_player.json` we run to add initial data 
-- Run the following command inside docker container ID : `python manage.py loaddata game/fixtures/politifact_20210430-154321.json` we run to add initial claim.
+- Run the following command inside docker container ID : `python manage.py loaddata game/fixtures/politifact_20210510-003417.json` we run to add initial claim.
 - Run the server like that: `./manage.py runserver` or restart the "api" container.
 
 

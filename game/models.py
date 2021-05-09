@@ -44,6 +44,7 @@ class Answer(models.Model):
         ('false','false'),
         ('mostly true','mostly true'),
         ('pants on fire','pants on fire'),
+        ('half true', 'half true'),
     )
     questionid = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name = "related to Question")
     answer_text = models.CharField(max_length=256,choices=STATUS)
