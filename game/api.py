@@ -11,6 +11,7 @@ from rest_framework.response import Response
 import json
 from django.core import serializers
 from rest_framework.throttling import UserRateThrottle
+import datetime
 
 
 
@@ -237,16 +238,22 @@ class ListAvailableGames(generics.ListAPIView):
 	serializer_class = LobbySerializer
 
 	def get(self, request):
-		queryset = Lobby.objects.filter(current_players__lt = F('num_of_players')) # lt = lessthan
+		#time_diff = datetime.datetime.now(timezone.utc) - datetime.timedelta(hours=1)
+
+		time_diff = datetime.datetime.now() - datetime.timedelta(hours=1)	
+		queryset = Lobby.objects.filter(
+			current_players__lt=F('num_of_players'), 
+			created_at__gt=time_diff
+			) # lt = lessthan , gt=greater than
 		tmpJson = serializers.serialize("json", queryset) # we convert queryset to serializable Json  Object
 		result = json.loads(tmpJson)  # we load tmJson Object
 		
 		if queryset:
 			return Response({
-                "message" : "Games listed successfully",
-                "games" : result,
-                "status": status.HTTP_201_CREATED
-            })
+				"message" : "Games listed successfully",
+				"games" : result,
+				"status": status.HTTP_201_CREATED
+			})
 
 
 class QuestionGame(generics.GenericAPIView):

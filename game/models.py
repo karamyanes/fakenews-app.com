@@ -7,7 +7,8 @@ class Lobby(models.Model):
     game_name = models.CharField(max_length=20)
     num_of_players = models.IntegerField(default=2)
     current_players = models.IntegerField(default=0)
-    join_successfuly = models.TextField(max_length=100,null=True, blank=True)
+    join_successfuly = models.TextField(max_length=100, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
     
 
 class Question(models.Model):
