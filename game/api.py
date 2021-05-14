@@ -54,8 +54,8 @@ class AnswerView(generics.GenericAPIView):
 			answer.is_correct = True 
 			answer.save()  # To update / set  is correct field with True in database
 			# insert into player
-			#Player.objects.get_or_create(user=current_user, game_id=10000)  # game id = 10000 is single player game_id
-			#game_obj = Lobby.objects.get(pk=10000)
+			#Player.objects.get_or_create(user=current_user, game_id=1)  # game id = 1 is single player game_id
+			#game_obj = Lobby.objects.get(pk=1)
 			try:
 				obj = Player.objects.get(user=current_user, game_id=game_obj.id)
 			except Player.DoesNotExist:
@@ -247,7 +247,7 @@ class ListAvailableGames(generics.ListAPIView):
 			) # lt = lessthan , gt=greater than
 		tmpJson = serializers.serialize("json", queryset) # we convert queryset to serializable Json  Object
 		result = json.loads(tmpJson)  # we load tmJson Object
-		
+
 		if queryset:
 			return Response({
 				"message" : "Games listed successfully",
@@ -303,22 +303,6 @@ class LobbyQuestionUpdate(APIView):
             })
 			
 
-class JoinSuccessful(APIView):
-	queryset = Lobby.objects.all()
-	serializer_class = LobbySerializer
-
-	def put(self, request, *args, **kwargs):
-		game_name = self.kwargs['game_name']
-		join_object = Lobby.objects.get(pk=game_name)
-		join_object.join_successfuly = request.POST['join_successfuly']
-		join_object.save()
-		return Response({
-                "message" : "Player join successfuly",
-                "status": status.HTTP_201_CREATED,
-				"join_successfuly": request.POST['join_successfuly'],
-            })
-
-
 class ScoreUpdate(APIView):
 	queryset = Player.objects.all()
 	serializer_class = PlayerSerializer
@@ -347,18 +331,6 @@ class GetHint(APIView):
 		question_object = LobbyQuestion.objects.get(question_id=question_id,game_id=game_id)
 		return Response({
 				"doc_hint": question_object.doc_hint,
-            })
-
-
-class GetJoinSuccessful(APIView):
-	queryset = Lobby.objects.all()
-	serializer_class = LobbySerializer
-
-	def get(self, request, *args, **kwargs):
-		game_name = self.kwargs['game_name']
-		join_object = Lobby.objects.get(pk=game_name)
-		return Response({
-				"join_successfuly": join_object.join_successfuly,
             })
 
 
